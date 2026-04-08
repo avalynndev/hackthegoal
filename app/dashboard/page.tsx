@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getMe, getStreak, getHours, getProjects } from "@/lib/hackatime";
+import { getMe, getStreak, getHours, getProjects, getApiKeys } from "@/lib/hackatime";
 
 function getWeekRange() {
   const end = new Date();
@@ -16,7 +16,7 @@ export default async function DashboardPage() {
 
   let me, streak, hours, projects;
   try {
-    [me, streak, hours, projects] = await Promise.all([
+    [me, streak, hours, projects ] = await Promise.all([
       getMe(),
       getStreak(),
       getHours(start, end),
@@ -25,7 +25,6 @@ export default async function DashboardPage() {
   } catch {
     redirect("/login");
   }
-
   const totalHours = (hours.total_seconds / 3600).toFixed(1);
 
   return (
@@ -44,6 +43,7 @@ export default async function DashboardPage() {
             <span className="text-sm text-gray-500">
               {me.github_username ?? me.emails?.[0]}
             </span>
+            {me.emails}
             <a
               href="/api/auth/logout"
               className="text-sm text-gray-400 hover:text-gray-600"
@@ -83,7 +83,7 @@ export default async function DashboardPage() {
             </p>
           </div>
         </div>
-
+        
         <div className="mb-8">
           <h2 className="text-base font-semibold mb-3">Projects</h2>
           <div className="flex flex-col gap-3">

@@ -6,12 +6,10 @@ export async function GET(req: NextRequest) {
   const state = searchParams.get("state");
   const error = searchParams.get("error");
 
-  // user denied
   if (error) {
     return NextResponse.redirect(new URL("/login?error=denied", req.url));
   }
 
-  // verify state to prevent CSRF
   const savedState = req.cookies.get("oauth_state")?.value;
   if (!state || state !== savedState) {
     return NextResponse.redirect(
@@ -19,7 +17,6 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // exchange code for access token
   const tokenRes = await fetch("https://hackatime.hackclub.com/oauth/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -40,7 +37,6 @@ export async function GET(req: NextRequest) {
 
   const { access_token } = await tokenRes.json();
 
-  // store token in a secure httpOnly cookie
   const res = NextResponse.redirect(new URL("/dashboard", req.url));
 
   res.cookies.set("hackatime_token", access_token, {
@@ -51,7 +47,6 @@ export async function GET(req: NextRequest) {
     path: "/",
   });
 
-  // clear the state cookie
   res.cookies.delete("oauth_state");
 
   return res;
