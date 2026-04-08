@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function middleware(req: NextRequest) {
+export default async function middleware(req: NextRequest) {
   const token = req.cookies.get("hackatime_token");
   const isProtected =
     req.nextUrl.pathname.startsWith("/dashboard") ||
