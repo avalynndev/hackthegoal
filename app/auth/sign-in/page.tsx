@@ -22,45 +22,44 @@ export default function SignIn() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-    const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setIsLoading(true)
-        setError("")
-        try {
-            const {email,password} = formData;
-            const result = isEmail(email)
-            ? await signIn.email({email, password})
-            : await signIn.username({username:email,password});
-            if (result.error) {
-                setError(result.error.message || "Sign in failed")
-            } else {
-                toast.success("Successfully signed in! ")
-                router.push("/")
-            } 
-        } catch (err) {
-            setError("An unexpected error occured")
-            console.error("Sign in error:", err)
-        } finally {
-            setIsLoading(false);
-        }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+    try {
+      const { email, password } = formData;
+      const result = isEmail(email)
+        ? await signIn.email({ email, password })
+        : await signIn.username({ username: email, password });
+      if (result.error) {
+        setError(result.error.message || "Sign in failed");
+      } else {
+        toast.success("Successfully signed in! ");
+        router.push("/");
+      }
+    } catch (err) {
+      setError("An unexpected error occured");
+      console.error("Sign in error:", err);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
   const handleHackatimeSignIn = async () => {
-    set0authLoading(true)
-    setError("")
+    set0authLoading(true);
+    setError("");
     try {
-        await authClient.signIn.oauth2({
-            providerId: "hackatime",
-            callbackURL: "/"
-        })
+      await authClient.signIn.oauth2({
+        providerId: "hackatime",
+        callbackURL: "/",
+      });
     } catch {
-        setError("Failed to connect with Hackatime")
-        set0authLoading(false)
+      setError("Failed to connect with Hackatime");
+      set0authLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 w-full bg-darker text-surface-content">
@@ -108,6 +107,23 @@ export default function SignIn() {
           <div className="flex-1 h-px flex-1 bg-surface-200"></div>{" "}
           <span className="text-xs text--h uppercase tracking-wider">or</span>{" "}
           <div className="flex-1 h-px flex-1 bg-surface-200"></div>
+        </div>
+        <div className="flex gap-2">
+          <input
+            type="email"
+            name="email"
+            placeholder="you@email.com"
+            
+            className="flex-1 bg-surface text-surface-content placeholder-muted rounded-xl px-5 py-3.5 focus:outline-none focus:ring-2 focus:ring-primary-h/50 transition-all border border-surface-200 focus:border-primary-h text-sm"
+          />
+          <button
+            data-button-root="true"
+            type="submit"
+            tabIndex={0}
+            className="px-5 py-3.5 bg-surface border border-primary-h text-primary-h rounded-xl hover:bg-primary-h hover:text-on-primary transition-all text-sm font-medium"
+          >
+            Send link
+          </button>
         </div>
         <div className="text-center">
           <a
